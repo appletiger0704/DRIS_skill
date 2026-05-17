@@ -52,6 +52,31 @@ description: |
    - `菜單!A3:M90`
    並將 workbook 設為開啟時自動重新計算。
 
+## 正式 Excel 完整保留與損毀防呆規則
+
+正式 DRIS Excel 常含有公式、樣式、列印設定、圖片/繪圖元件、註解、關聯檔、計算鏈與 workbook metadata。處理正式範本時，不可使用會遺失這些元件的簡化輸出方式。
+
+硬性規則：
+
+1. 不可重建 workbook；必須從使用者提供的正式 `.xlsx` 或專案正式範本複製後修改。
+2. 不可刪除或重排任何原始 sheet。
+3. 不可刪除非目標 XML parts，例如 drawings、comments、printerSettings、theme、styles、sharedStrings、calcChain、workbook rels、worksheet rels、docProps、customXml 等。
+4. 若使用 `openpyxl`、`LibreOffice` 或其他套件重存，必須檢查重存後內部檔案數量、sheet 數量、關聯檔與原始範本是否異常減少；若明顯減少，該檔不可交付。
+5. 若使用低階 OOXML/ZIP 方式修改，只能修改目標 worksheet 的目標 cell；必須保留 namespace、relationship id、content types、shared strings 與 workbook 結構。
+6. 不可手動產生不合法 XML namespace，例如重複宣告、錯誤前綴、遺漏關聯檔，否則 Excel 會判定檔案損毀。
+7. 若需要清除 `calcChain.xml`，必須同步更新 `[Content_Types].xml` 與 `_rels/.rels`/`workbook.xml.rels` 中對應關聯；不可只刪除單一檔案。
+8. 檔案交付前必須做完整性驗證：
+   - `.xlsx` 可作為 ZIP 開啟。
+   - ZIP 內無重複檔案名稱。
+   - 所有 XML 可被解析。
+   - `xl/workbook.xml`、`xl/_rels/workbook.xml.rels`、`[Content_Types].xml` 存在。
+   - 所有 workbook sheet 對應的 worksheet XML 存在。
+   - 原始重要 sheet 仍存在。
+   - 內部檔案數量不可較原範本異常減少。
+9. 若產出的 Excel 被使用者回報「檔案損毀」或「內容遺失」，需回到原始正式範本重新產生，不可在已損毀檔案上繼續修補。
+
+交付檔案時需說明：是否完整保留原始 workbook 結構、是否保留公式與 sheet、是否已做 ZIP/XML/關聯檢查。
+
 ## 餐別代碼硬性規則
 
 正式 DRIS 範本的 `與DRIs比較` 使用 `SUMIF` 依餐別文字加總，因此 `計算!A6:A90` 的餐別必須使用範本原始代碼，不可自行加字：
@@ -84,9 +109,10 @@ description: |
 6. 食材名稱對照：使用正式範本的「台灣食品成分表2020版」精準樣品名稱
 7. 寫入 Excel：只寫入正式範本指定輸入格，保留公式與樣式
 8. 更新或重新計算公式結果
-9. 讀取「計算」與「與DRIs比較」結果
-10. 檢核是否符合 DRIs 與個案限制
-11. 不符合則最多迭代 5 次，仍不符合需終止並說明原因
+9. 驗證 Excel 完整性：ZIP、XML、sheet、rels、content types 與內部檔案數量
+10. 讀取「計算」與「與DRIs比較」結果
+11. 檢核是否符合 DRIs 與個案限制
+12. 不符合則最多迭代 5 次，仍不符合需終止並說明原因
 ```
 
 ## 個案分類
@@ -190,3 +216,4 @@ CKD 未透析菜單設計時，需優先使用低氮澱粉補足熱量，例如�
 5. 營養檢核結果。
 6. 若產出 Excel，需使用正式 DRIS 範本回傳，不可回傳自製簡化版。
 7. 需說明已更新的主要 sheet 與關鍵營養檢核值。
+8. 需說明 Excel 是否已通過完整性驗證；若未通過，不可交付該檔案。
