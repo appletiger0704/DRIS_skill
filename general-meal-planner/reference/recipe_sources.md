@@ -24,3 +24,37 @@
 - DRIS 食材對應
 - 預估風險：鈉、鉀、磷、糖、脂肪、蛋白質
 - 是否採用
+
+
+## v6 菜名取得流程
+
+為避免菜單名稱完全憑空產生，建議先人工或程式整理外部來源摘要，再使用 `scripts/suggest_recipe_names.py` 產出候選菜名。
+
+### recipe_sources.json 範例
+
+```json
+[
+  {
+    "source_type": "TasteAtlas",
+    "source_name": "TasteAtlas",
+    "region": "Peru / Japan",
+    "dish_or_style": "Nikkei citrus seafood",
+    "flavor_notes": ["citrus", "pepper", "herbs"],
+    "techniques": ["marinate", "quick sear"],
+    "risk_notes": ["avoid high sodium sauce", "control seafood protein portion"]
+  }
+]
+```
+
+### 指令
+
+```bash
+python scripts/suggest_recipe_names.py recipe_sources.json --patient ckd_non_dialysis --output candidate_recipe_names.json
+```
+
+### 使用限制
+
+- 只能擷取料理概念、風味方向、技法與搭配邏輯。
+- 不可複製來源完整食譜。
+- 菜名、食材重量與調味必須依個案重新設計。
+- CKD、高血鉀、水腫、寡尿個案需優先控制蛋白質、鈉、鉀、磷與水分。
