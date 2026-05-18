@@ -1,0 +1,22 @@
+Recipe lookup workflow for general-meal-planner
+
+Before designing a menu, search trusted cuisine sources for real dish ideas.
+
+Preferred sources:
+1. TasteAtlas: traditional dishes and local ingredients.
+2. Gastronomixs: ingredient pairing and flavor building blocks.
+3. The World's 50 Best Restaurants: modern restaurant trends and cooking techniques.
+
+Workflow:
+1. Identify patient limits and nutrition targets.
+2. Identify cuisine style requested by the user.
+3. Collect candidate dishes from the sources above.
+4. Extract only dish structure, flavor direction, ingredient pairing, and cooking technique.
+5. Do not copy full recipes or long source text.
+6. Adapt each dish for the patient by changing ingredients, seasoning, portion size, and cooking method.
+7. Map all ingredients to the DRIS workbook food database.
+8. Write the menu into the official DRIS Excel template.
+9. Check calories, macronutrients, vitamins, minerals, and disease-specific limits.
+10. If results fail, adjust the dish candidates and recalculate.
+
+Output should include a short source inspiration note for each adopted dish.
